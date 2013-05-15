@@ -113,7 +113,7 @@ splash_create (gboolean be_verbose)
     g_object_new (GTK_TYPE_WINDOW,
                   "type",            GTK_WINDOW_TOPLEVEL,
                   "type-hint",       GDK_WINDOW_TYPE_HINT_SPLASHSCREEN,
-                  "title",           _("GIMP Startup"),
+                  "title",           _("Picman Startup"),
                   "role",            "gimp-startup",
                   "window-position", GTK_WIN_POS_CENTER,
                   "resizable",       FALSE,
@@ -389,7 +389,7 @@ splash_image_load (gboolean be_verbose)
   GdkPixbufAnimation *pixbuf;
   gchar              *filename;
 
-  filename = gimp_personal_rc_file ("gimp-splash.png");
+  filename = gimp_personal_rc_file ("gimp-splash.png"); //New image required for PICMAN
 
   if (be_verbose)
     g_printerr ("Trying splash '%s' ... ", filename);
@@ -411,7 +411,7 @@ splash_image_load (gboolean be_verbose)
     return pixbuf;
 
   filename = g_build_filename (gimp_data_directory (),
-                               "images", "gimp-splash.png", NULL);
+                               "images", "gimp-splash.png", NULL); //new image required for PICMAN
 
   if (be_verbose)
     g_printerr ("Trying splash '%s' ... ", filename);
